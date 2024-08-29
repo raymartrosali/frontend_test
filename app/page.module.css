@@ -209,6 +209,16 @@
   .grid {
     grid-template-columns: repeat(2, 50%);
   }
+  .main{
+    padding: 1rem;
+  }
+  /* Adjusted Padding for tablet view */
+}
+@media (max-width: 701px) {
+  .main{
+    padding: 0.5rem;
+  }
+  /* Adjusted Padding for mobile view */
 }
 
 @media (prefers-color-scheme: dark) {
