@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Avatar from "boring-avatars";
 import {
   FaRegCircleXmark,
@@ -14,6 +14,7 @@ import Modal from "./modal";
 
 import { User } from "./types/user";
 
+
 export type GalleryProps = {
   users: User[];
 };
@@ -21,6 +22,37 @@ const Gallery = ({ users }: GalleryProps) => {
   const [usersList, setUsersList] = useState(users);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [sortField, setField] = useState();
+  const [sortOrder, setOrder] = useState();
+  // created states for field and order
+
+  useEffect(() => {
+
+
+
+      if(sortField === "company.name"){
+        if (sortOrder === "ascending") {
+          setUsersList([...usersList].sort((a, b) => a.company.name.localeCompare(b.company.name))); 
+          //  For Ascending
+        }else{
+          setUsersList([...usersList].sort((a, b) => a.company.name.localeCompare(b.company.name)).reverse()); 
+          //  Used reverse method For descending
+        }
+         // just used local compare to select another property inside the object
+      }else{
+        let newUsers =  [...usersList].sort((a, b) => {
+          const comparison = a[sortField] > b[sortField] ? 1 : -1;
+          // Sorting logic for the selected field
+          return sortOrder === 'ascending' ? comparison : -comparison;
+          // Sorting logic for the order
+        });
+        setUsersList(newUsers);
+        // Dynamic Sorting
+      }
+  }, [sortField, sortOrder]);
+  // Created a useEffect that triggers if the state for sortingField or sortingOrder has any changes
+
 
   const handleModalOpen = (id: number) => {
     const user = usersList.find((item) => item.id === id) || null;
@@ -40,7 +72,8 @@ const Gallery = ({ users }: GalleryProps) => {
     <div className="user-gallery">
       <div className="heading">
         <h1 className="title">Users</h1>
-        <Controls />
+        <Controls setField={setField} setOrder={setOrder}/>
+        
       </div>
       <div className="items">
         {usersList.map((user, index) => (
